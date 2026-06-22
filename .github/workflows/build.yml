@@ -1,0 +1,50 @@
+name: Build
+
+env:
+  MAVEN_VERSION: "3.9.16"
+
+on:
+  workflow_dispatch: # Allow manual trigger
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+permissions:
+  actions: read
+  contents: write
+  id-token: write
+  security-events: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: ["21.0.9", "25.0.3"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - name: Build
+        uses: ./.github/actions/build
+        with:
+          java-version: ${{ matrix.java-version }}
+          maven-version: ${{ env.MAVEN_VERSION }}
+      - name: Sonar Scan
+        uses: cap-java/.github/actions/scan-with-sonar@296573b55e906f5c77a1855bcfe4285cbbc5cac4 # main
+        if: matrix.java-version == '25.0.3'
+        with:
+          java-version: 21
+          maven-version: ${{ env.MAVEN_VERSION }}
+          sonarq-token: ${{ secrets.SONAR_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          sonar-project-key: cap-java_cds-feature-ord
+          coverage-report-path: cds-feature-ord/target/site/jacoco/jacoco.xml
+          build-script: mvn verify -B -ntp
+      - name: CodeQL Scan
+        uses: cap-java/.github/actions/scan-with-codeql@296573b55e906f5c77a1855bcfe4285cbbc5cac4 # main
+        if: matrix.java-version == '25.0.3'
+        with:
+          java-version: 21
+          maven-version: ${{ env.MAVEN_VERSION }}
+          language: java-kotlin
+          queries: security-extended
