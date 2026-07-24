@@ -1,0 +1,26 @@
+## IntelliJ
+.idea
+*.iml
+
+## Eclipse
+.project
+.classpath
+.settings/
+
+## VS Code
+java-formatter.xml
+settings.json
+
+## Java
+target/
+
+.flattened-pom.xml
+node_modules
+
+## PMD
+.pmd
+.pmdruleset.xml
+
+## files required for local execution of github actions with act
+.env
+.secrets

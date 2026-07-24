@@ -1,0 +1,129 @@
+{
+  "openResourceDiscovery": "1.9",
+  "policyLevel": "none",
+  "description": "this is an application description",
+  "products": [
+    {
+      "ordId": "customer:product:raw_event:",
+      "title": "ORD App Title for customerbookshop",
+      "shortDescription": " shortDescription for products",
+      "vendor": "sap:vendor:SAP:"
+    }
+  ],
+  "groups": [],
+  "consumptionBundles": [
+  ],
+  "packages": [
+    {
+      "ordId": "sap.cdsjavacpoc:package:SomePackageIntegrationDependencies:v1",
+      "title": "sample title for RawEvent",
+      "shortDescription": "Here is the shortDescription for packages",
+      "description": "Here is the description for packages",
+      "version": "1.0.0",
+      "partOfProducts": [
+        "customer:product:raw_event:"
+      ],
+      "vendor": "sap:vendor:SAP:"
+    }
+  ],
+  "eventResources": [
+    {
+      "ordId": "sap.cdsjavacpoc:eventResource:RawEvent:v1",
+      "title": "Event Example",
+      "shortDescription": "Simple Event Example",
+      "description": "Example long description",
+      "version": "1.2.1",
+      "lastUpdate": "2022-12-19T15:47:04+00:00",
+      "releaseStatus": "beta",
+      "partOfPackage": "sap.cdsjavacpoc:package:SomePackageIntegrationDependencies:v1",
+      "visibility": "public",
+      "resourceDefinitions": [
+      ],
+      "extensible": {
+        "supported": "no"
+      }
+    }
+  ],
+  "apiResources": [
+    {
+      "ordId": "customer.ebsttestscds:apiResource:AdminService:v1",
+      "title": "AdminService",
+      "shortDescription": "AdminService",
+      "description": "AdminService",
+      "version": "1.0.0",
+      "visibility": "public",
+      "partOfGroups": [
+        "sap.cds:service:customer.ebsttestscds:AdminService"
+      ],
+      "releaseStatus": "active",
+      "apiProtocol": "odata-v4",
+      "resourceDefinitions": [
+        {
+          "type": "openapi-v3",
+          "mediaType": "application/json",
+          "url": "/.well-known/open-resource-discovery/v1/api-metadata/AdminService.oas3.json",
+          "accessStrategies": [
+            {
+              "type": "open"
+            }
+          ]
+        },
+        {
+          "type": "edmx",
+          "mediaType": "application/xml",
+          "url": "/.well-known/open-resource-discovery/v1/api-metadata/AdminService.edmx",
+          "accessStrategies": [
+            {
+              "type": "open"
+            }
+          ]
+        }
+      ],
+      "entryPoints": [
+        "/odata/v4/admin"
+      ],
+      "extensible": {
+        "supported": "no"
+      },
+      "entityTypeMappings": [
+        {
+          "entityTypeTargets": []
+        }
+      ]
+    }
+  ],
+  "integrationDependencies": [
+    {
+      "ordId": "sap.cdsjavacpoc:integrationDependency:RawEvent:v1",
+      "localId": "CustomerOrder",
+      "title": "Customer Order Integration Needs",
+      "shortDescription": "Integration dependency to realize customer order data product",
+      "description": "This integration dependency describes all the necessary aspects needed for the custom order data product to get data from. ...",
+      "partOfPackage": "sap.cdsjavacpoc:package:SomePackageIntegrationDependencies:v1",
+      "version": "1.2.3",
+      "lastUpdate": "2022-12-19T15:47:04+00:00",
+      "visibility": "public",
+      "releaseStatus": "active",
+      "mandatory": false,
+      "aspects": [
+        {
+          "title": "RawEvent",
+          "description": "Raw Custom Order Data (For this test case the API reference is not part of this ORD document and will eventually be uploaded to Business Accelerator Hub!)",
+          "mandatory": false,
+          "supportMultipleProviders": true,
+          "eventResources": [
+            {
+              "ordId": "sap.cdsjavacpoc:eventResource:RawEvent:v1",
+              "minVersion": "1.3.0",
+              "subset": [
+                {
+                  "eventType": "sap.cdscpoc.myobject.myoperation.v1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

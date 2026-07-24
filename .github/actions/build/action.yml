@@ -1,0 +1,30 @@
+name: Maven Build
+description: "Builds a Maven project."
+
+inputs:
+  java-version:
+    description: "The Java version the build shall run with."
+    required: true
+  maven-version:
+    description: "The Maven version the build shall run with."
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Java ${{ inputs.java-version }}
+      uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+      with:
+        distribution: sapmachine
+        java-version: ${{ inputs.java-version }}
+        cache: maven
+
+    - name: Setup Maven ${{ inputs.maven-version }}
+      uses: stCarolas/setup-maven@d6af6abeda15e98926a57b5aa970a96bb37f97d1 # v5
+      with:
+        maven-version: ${{ inputs.maven-version }}
+
+    - name: Piper Maven build
+      uses: SAP/project-piper-action@0694c809adf25568fc3c950041097323d71b91ed # v1.26.2
+      with:
+        step-name: mavenBuild
