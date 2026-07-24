@@ -1,0 +1,12 @@
+name: Label issues
+
+permissions: {}
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  label-issue:
+    uses: cap-java/.github/.github/workflows/issue.yml@main

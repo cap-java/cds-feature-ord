@@ -1,0 +1,11 @@
+name: Prevent "New" Label on Issues
+
+permissions: {}
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  prevent-issue-labeling:
+    uses: cap-java/.github/.github/workflows/prevent-issue-labeling.yml@main
