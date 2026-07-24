@@ -5,49 +5,121 @@ env:
   MAVEN_VERSION: '3.9.16'
 
 on:
-  workflow_dispatch:
+  release:
+    types: [ "released" ]
 
 jobs:
+  requires-approval:
+    runs-on: ubuntu-latest
+    name: "Waiting for release approval"
+    environment: release
+    permissions:
+      contents: read
+    steps:
+      - name: Approval Step
+        run: echo "Release has been approved!"
+
+  verify-version:
+    needs: requires-approval
+    name: Verify Version Matches Tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Set up Java
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: sapmachine
+          cache: maven
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@d6af6abeda15e98926a57b5aa970a96bb37f97d1 # v5
+        with:
+          maven-version: ${{ env.MAVEN_VERSION }}
+
+      - name: Verify pom.xml revision matches release tag
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          REVISION=$(mvn help:evaluate -Dexpression=revision -q -DforceStdout)
+          echo "Tag:      $TAG"
+          echo "Revision: $REVISION"
+          if [ "$TAG" != "$REVISION" ]; then
+            echo "::error::Release tag '$TAG' does not match pom.xml <revision> '$REVISION'. Open a 'Prep release' PR to bump the version before tagging."
+            exit 1
+          fi
+        shell: bash
+
+  blackduck:
+    needs: verify-version
+    name: Blackduck Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Scan With Black Duck
+        uses: cap-java/.github/actions/scan-with-blackduck@main
+        with:
+          blackduck_token: ${{ secrets.BLACK_DUCK_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          maven-version: ${{ env.MAVEN_VERSION }}
+          project-name: com.sap.cds.feature.ord
+          included-modules: cds-feature-ord
+          version: ${{ github.event.release.tag_name }}
+
   build:
     name: Build
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: blackduck
     permissions:
-      contents: write
+      contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
       - name: Build
-        uses: ./.github/actions/build
+        uses: cap-java/.github/actions/build@main
         with:
           java-version: ${{ env.JAVA_VERSION }}
           maven-version: ${{ env.MAVEN_VERSION }}
-      - name: Upload Changed Artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: root-build
-          include-hidden-files: true
-          path: .
-          retention-days: 1
 
   deploy:
     name: Deploy to Maven Central
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: build
     environment: release
     permissions:
-      contents: write
-    needs: [build]
+      contents: read
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
         with:
-          name: root-build
+          ref: ${{ github.event.release.tag_name }}
+
       - name: Deploy
-        uses: ./.github/actions/release
+        uses: cap-java/.github/actions/deploy-release@main
         with:
           user: ${{ secrets.CENTRAL_REPOSITORY_USER }}
           password: ${{ secrets.CENTRAL_REPOSITORY_PASS }}
-          pgp-pub-key: ${{ secrets.PGP_PUBKEY_ID }}
-          pgp-private-key: ${{ secrets.PGP_PRIVATE_KEY }}
-          pgp-passphrase: ${{ secrets.PGP_PASSPHRASE }}
-          maven-version: ${{ env.MAVEN_VERSION }}
+          gpg-pub-key: ${{ secrets.PGP_PUBKEY_ID }}
+          gpg-private-key: ${{ secrets.PGP_PRIVATE_KEY }}
+          gpg-passphrase: ${{ secrets.PGP_PASSPHRASE }}
+          revision: ${{ github.event.release.tag_name }}
           java-version: ${{ env.JAVA_VERSION }}
+          maven-version: ${{ env.MAVEN_VERSION }}
