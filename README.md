@@ -15,7 +15,7 @@ a [CAP Java plugin](https://cap.cloud.sap/docs/java/building-plugins) that provi
 ## Support, Feedback, Contributing
 
 This project is open to feature requests/suggestions, bug reports etc.
-via [GitHub issues](https://github.com/cap-java/cds-feature-attachments/issues).
+via [GitHub issues](https://github.com/cap-java/cds-feature-ord/issues).
 
 Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project
 structure, as well as additional contribution information,
