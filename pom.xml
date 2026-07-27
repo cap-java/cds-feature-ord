@@ -41,7 +41,7 @@
     <properties>
         <revision>6.0.0</revision>
         <jdk.version>17</jdk.version>
-        <cds4j.version>4.9.1</cds4j.version>
+        <cds4j.version>5.0.0</cds4j.version>
         <slf4j.version>2.0.18</slf4j.version>
         <lombok.version>1.18.46</lombok.version>
         <servlet.version>6.1.0</servlet.version>
