@@ -19,7 +19,7 @@ via [GitHub issues](https://github.com/cap-java/cds-feature-ord/issues).
 
 Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project
 structure, as well as additional contribution information,
-see our [Contribution Guidelines](./doc/CONTRIBUTING.md).
+see our [Contribution Guidelines](./CONTRIBUTING.md).
 
 ## References & Links
 
