@@ -18,7 +18,7 @@ a [CAP Java plugin](https://cap.cloud.sap/docs/java/building-plugins) that provi
 
 - [Open Resource Discovery](https://open-resource-discovery.org/)
 - [CAP Java documentation](https://cap.cloud.sap/docs/java/)
-- [CAP Plugins overview]([https://cap.cloud.sap/docs/plugins/#notifications](https://cap.cloud.sap/docs/plugins/#ord-open-resource-discovery))
+- [CAP Plugins overview](https://cap.cloud.sap/docs/plugins/#ord-open-resource-discovery)
 
 ## Support, Feedback, Contributing
 
