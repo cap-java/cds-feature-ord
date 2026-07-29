@@ -2,7 +2,7 @@
 [![Deploy new Version with Maven](https://github.com/cap-java/cds-feature-ord/actions/workflows/release.yml/badge.svg)](https://github.com/cap-java/cds-feature-ord/actions/workflows/release.yml) 
 [![REUSE status](https://api.reuse.software/badge/github.com/cap-java/cds-feature-ord)](https://api.reuse.software/info/github.com/cap-java/cds-feature-ord)
 
-# ORD Plugin for SAP Cloud Application Programming Model (CAP)
+# SAP Cloud Application Programming Model, generation plugin for Open Resource Discovery
 
 The `com.sap.cds:cds-feature-ord` dependency is
 a [CAP Java plugin](https://cap.cloud.sap/docs/java/building-plugins) that provides out-of-the box ORD metadata exposure .

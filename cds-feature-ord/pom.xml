@@ -11,8 +11,8 @@
 
     <artifactId>cds-feature-ord</artifactId>
 
-    <name>Open Resource Discovery Feature</name>
-    <description>Open Resource Discovery feature for CDS Services Java</description>
+    <name>SAP Cloud Application Programming Model, generation plugin for Open Resource Discovery</name>
+    <description>Open Resource Discovery Java plugin feature for SAP Cloud Application Programming Model</description>
 
     <dependencies>
 
