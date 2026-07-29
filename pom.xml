@@ -8,8 +8,6 @@
     <packaging>pom</packaging>
     <version>${revision}</version>
 
-    <name>cds-feature-ord-root</name>
-    <description>Open Resource Discovery Java plugin feature for SAP Cloud Application Programming Model</description>
     <url>${cds.url}</url>
 
     <licenses>
