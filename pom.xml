@@ -8,8 +8,6 @@
     <packaging>pom</packaging>
     <version>${revision}</version>
 
-    <name>cds-feature-ord-root</name>
-    <description>Open Resource Discovery Java plugin feature for SAP Cloud Application Programming Model</description>
     <url>${cds.url}</url>
 
     <licenses>
@@ -41,13 +39,13 @@
     <properties>
         <revision>6.0.0</revision>
         <jdk.version>17</jdk.version>
-        <cds4j.version>4.9.1</cds4j.version>
+        <cds4j.version>5.0.0</cds4j.version>
         <slf4j.version>2.0.18</slf4j.version>
         <lombok.version>1.18.46</lombok.version>
         <servlet.version>6.1.0</servlet.version>
-        <jupiter.version>6.1.0</jupiter.version>
+        <jupiter.version>6.1.2</jupiter.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <jackson.version>2.22.0</jackson.version>
+        <jackson.version>2.22.1</jackson.version>
         <mockito.version>5.23.0</mockito.version>
         <cds.services.version>5.0.0</cds.services.version>
         <cds.url>https://cap.cloud.sap/docs/java</cds.url>
@@ -148,7 +146,7 @@
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>0.10.0</version>
+                    <version>0.11.0</version>
                     <extensions>true</extensions>
                 </plugin>
                 <plugin>
@@ -173,7 +171,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.4</version>
+                    <version>3.5.6</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-pmd-plugin</artifactId>
@@ -181,7 +179,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.6.2</version>
+                    <version>3.6.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -191,17 +189,17 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.14</version>
+                    <version>0.8.15</version>
                 </plugin>
                 <plugin>
                     <groupId>org.pitest</groupId>
                     <artifactId>pitest-maven</artifactId>
-                    <version>1.22.1</version>
+                    <version>1.25.8</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.9.8.2</version>
+                    <version>4.10.3.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -215,7 +213,7 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <executions>
                     <execution>
                         <goals>
