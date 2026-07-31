@@ -31,6 +31,13 @@
         </developer>
     </developers>
 
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <url>https://central.sonatype.com</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <revision>6.0.0</revision>
         <jdk.version>17</jdk.version>
