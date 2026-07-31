@@ -123,4 +123,4 @@ jobs:
           revision: ${{ github.event.release.tag_name }}
           java-version: ${{ env.JAVA_VERSION }}
           maven-version: ${{ env.MAVEN_VERSION }}
-          maven-extra-args: '-pl cds-feature-ord -am'
+          maven-extra-args: '-f cds-feature-ord/pom.xml'
