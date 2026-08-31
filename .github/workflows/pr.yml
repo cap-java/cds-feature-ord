@@ -1,6 +1,7 @@
 name: CI - PR
 
 env:
+  JAVA_VERSION: '21'
   MAVEN_VERSION: "3.9.16"
 
 on:
@@ -23,14 +24,14 @@ jobs:
       - name: Scan With Black Duck
         uses: cap-java/.github/actions/scan-with-blackduck@main
         with:
+          scan_mode: RAPID
+          included-modules: cds-feature-ord
+          project-name: com.sap.cds.feature.ord
+          excluded-dirs: '**/*test*,**/target/site'
+          java-version: ${{ env.JAVA_VERSION }}
+          maven-version: ${{ env.MAVEN_VERSION }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           blackduck_token: ${{ secrets.BLACK_DUCK_TOKEN }}
-          java-version: 21
-          maven-version: ${{ env.MAVEN_VERSION }}
-          project-name: com.sap.cds.feature.ord
-          included-modules: cds-feature-ord
-          scan_mode: RAPID
-          excluded-dirs: '**/*test*,**/target/site'
           # rapid_compare_mode: BOM_COMPARE # PRs might only be blocked by things they introduce, not by pre-existing issues that could have appeared in the main branch in the meantime
 
   build-and-test:
