@@ -72,12 +72,14 @@ jobs:
       - name: Scan With Black Duck
         uses: cap-java/.github/actions/scan-with-blackduck@main
         with:
-          blackduck_token: ${{ secrets.BLACK_DUCK_TOKEN }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          maven-version: ${{ env.MAVEN_VERSION }}
-          project-name: com.sap.cds.feature.ord
           included-modules: cds-feature-ord
+          project-name: com.sap.cds.feature.ord
+          excluded-dirs: '**/*test*,**/target/site'
+          java-version: ${{ env.JAVA_VERSION }}
+          maven-version: ${{ env.MAVEN_VERSION }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           version: ${{ github.event.release.tag_name }}
+          blackduck_token: ${{ secrets.BLACK_DUCK_TOKEN }}
 
   build:
     name: Build
