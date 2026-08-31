@@ -1,5 +1,6 @@
 [![Java Build with Maven](https://github.com/cap-java/cds-feature-ord/actions/workflows/main.yml/badge.svg)](https://github.com/cap-java/cds-feature-ord/actions/workflows/main.yml) 
 [![Deploy new Version with Maven](https://github.com/cap-java/cds-feature-ord/actions/workflows/release.yml/badge.svg)](https://github.com/cap-java/cds-feature-ord/actions/workflows/release.yml) 
+[![Maven version: cds-feature-ord](https://img.shields.io/maven-central/v/com.sap.cds/cds-feature-ord?label=cds-feature-ord)](https://central.sonatype.com/artifact/com.sap.cds/cds-feature-ord)
 [![REUSE status](https://api.reuse.software/badge/github.com/cap-java/cds-feature-ord)](https://api.reuse.software/info/github.com/cap-java/cds-feature-ord)
 
 # SAP Cloud Application Programming Model, generation plugin for Open Resource Discovery
