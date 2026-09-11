@@ -27,6 +27,7 @@ public class OrdResourcesProviderConfiguration implements CdsRuntimeConfiguratio
 
     if (dynamicModelUtils.isModelProviderEnabled()) {
       configurer.provider(new DynamicOrdResourcesProviderImpl(
+          cdsRuntime,
           new MtxSidecarClientImpl(cdsRuntime),
           dynamicModelUtils,
           asList(loadAll(CdsOrdNodeProcessor.class, cdsRuntime))));
