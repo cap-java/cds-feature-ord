@@ -41,8 +41,8 @@
     <properties>
         <revision>6.0.1</revision>
         <jdk.version>17</jdk.version>
-        <cds4j.version>5.0.2</cds4j.version>
-        <slf4j.version>2.0.18</slf4j.version>
+        <cds4j.version>5.1.1</cds4j.version>
+        <slf4j.version>2.0.19</slf4j.version>
         <lombok.version>1.18.48</lombok.version>
         <servlet.version>6.1.0</servlet.version>
         <jupiter.version>6.1.3</jupiter.version>
@@ -50,7 +50,7 @@
         <jackson.version>2.22.2</jackson.version>
         <mockito.version>5.23.0</mockito.version>
         <cloud.sdk.version>5.34.0</cloud.sdk.version>
-        <cds.services.version>5.0.2</cds.services.version>
+        <cds.services.version>5.1.1</cds.services.version>
         <cds.url>https://cap.cloud.sap/docs/java</cds.url>
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -225,7 +225,7 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.10.2</version>
                 <executions>
                     <execution>
                         <goals>
