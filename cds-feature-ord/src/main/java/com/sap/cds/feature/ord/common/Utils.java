@@ -19,6 +19,7 @@ import com.sap.cds.services.environment.CdsProperties.OpenResourceDiscovery;
 import com.sap.cds.services.environment.CdsProperties.Security.Authentication;
 import com.sap.cds.services.runtime.CdsRuntime;
 import com.sap.cds.services.utils.ErrorStatusException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +40,12 @@ public class Utils {
   @Slf4j
   @UtilityClass
   public static class Http {
+
+    public static String header(HttpServletRequest request, String header) {
+      String value = request.getHeader(header);
+
+      return (value == null || value.isBlank()) ? null : value;
+    }
 
     public static void respondWith(HttpServletResponse response, String payload) {
       try (PrintWriter writer = response.getWriter()) {

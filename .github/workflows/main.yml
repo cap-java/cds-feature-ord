@@ -1,6 +1,7 @@
 name: CI - MAIN
 
 env:
+  JAVA_VERSION: '21'
   MAVEN_VERSION: "3.9.16"
 
 on:
@@ -22,11 +23,14 @@ jobs:
       - name: Scan With Black Duck
         uses: cap-java/.github/actions/scan-with-blackduck@main
         with:
-          blackduck_token: ${{ secrets.BLACK_DUCK_TOKEN }}
-          maven-version: ${{ env.MAVEN_VERSION }}
-          project-name: com.sap.cds.feature.ord
-          included-modules: cds-feature-ord
           scan_mode: FULL
+          included-modules: cds-feature-ord
+          project-name: com.sap.cds.feature.ord
+          excluded-dirs: '**/*test*,**/target/site'
+          java-version: ${{ env.JAVA_VERSION }}
+          maven-version: ${{ env.MAVEN_VERSION }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          blackduck_token: ${{ secrets.BLACK_DUCK_TOKEN }}
 
   build-and-test:
     uses: ./.github/workflows/pipeline.yml

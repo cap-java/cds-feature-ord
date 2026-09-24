@@ -9,8 +9,11 @@ import static com.sap.cds.feature.ord.common.Utils.Resources.asOrdJsonInputStrea
 import static com.sap.cds.feature.ord.common.Utils.Resources.getResourceAsStream;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.io.FilenameUtils.concat;
+import static org.apache.commons.io.FilenameUtils.getBaseName;
+import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.normalize;
 
+import com.sap.cds.adapter.edmx.EdmxV4Provider;
 import com.sap.cds.feature.ord.processor.CdsOrdNodeProcessor;
 import com.sap.cds.feature.ord.provider.OrdResourcesProvider;
 import com.sap.cds.services.runtime.CdsRuntime;
@@ -21,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class StaticOrdResourcesProviderImpl implements OrdResourcesProvider {
+
+  private static final String EDMX_EXTENSION = "edmx";
 
   private final CdsRuntime cdsRuntime;
   private final List<CdsOrdNodeProcessor> cdsOrdNodeProcessors;
@@ -38,6 +43,14 @@ public class StaticOrdResourcesProviderImpl implements OrdResourcesProvider {
 
     return Objects.equals("documents/ord-document", normalized)
         ? asOrdJsonInputStream(getResourceAsStream(ordDocumentAbsolutePath), cdsOrdNodeProcessors)
-        : getResourceAsStream(concat(ordResourcesRoot, normalized));
+        : loadResourceAsStream(concat(ordResourcesRoot, normalized));
+  }
+
+  private InputStream loadResourceAsStream(String path) {
+    if (EDMX_EXTENSION.equalsIgnoreCase(getExtension(path))) {
+      return cdsRuntime.getProvider(EdmxV4Provider.class).getEdmx(getBaseName(path));
+    }
+
+    return getResourceAsStream(path);
   }
 }

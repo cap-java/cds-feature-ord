@@ -5,6 +5,7 @@ package com.sap.cds.feature.ord.servlet;
 
 import static com.sap.cds.feature.ord.common.Constants.HEADER_LOCAL_TENANT_ID;
 import static com.sap.cds.feature.ord.common.Utils.Http.handleException;
+import static com.sap.cds.feature.ord.common.Utils.Http.header;
 import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static org.apache.commons.io.FilenameUtils.getExtension;
@@ -47,7 +48,7 @@ public class DocumentsServlet extends HttpServlet {
 
     cdsRuntime
         .requestContext()
-        .systemUser(request.getHeader(HEADER_LOCAL_TENANT_ID))
+        .systemUser(header(request, HEADER_LOCAL_TENANT_ID))
         .run(rc -> {
           try {
             processDocument(request, response);
