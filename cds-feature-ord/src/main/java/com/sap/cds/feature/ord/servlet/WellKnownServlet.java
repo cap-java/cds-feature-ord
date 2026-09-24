@@ -8,6 +8,7 @@ import static com.sap.cds.feature.ord.common.Constants.PERSPECTIVE_SYSTEM_INSTAN
 import static com.sap.cds.feature.ord.common.Constants.PERSPECTIVE_SYSTEM_VERSION;
 import static com.sap.cds.feature.ord.common.Utils.CdsRuntimeProperties.getOrdProperties;
 import static com.sap.cds.feature.ord.common.Utils.Http.handleException;
+import static com.sap.cds.feature.ord.common.Utils.Http.header;
 import static com.sap.cds.feature.ord.common.Utils.Http.respondWith;
 import static com.sap.cds.services.ErrorStatuses.NOT_FOUND;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
@@ -57,7 +58,7 @@ public class WellKnownServlet extends HttpServlet {
 
     cdsRuntime
         .requestContext()
-        .systemUser(request.getHeader(HEADER_LOCAL_TENANT_ID))
+        .systemUser(header(request, HEADER_LOCAL_TENANT_ID))
         .run(rc -> {
           response.setStatus(SC_OK);
           response.setContentType(APPLICATION_JSON.getMimeType());

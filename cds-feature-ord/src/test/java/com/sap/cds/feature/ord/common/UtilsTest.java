@@ -23,24 +23,44 @@ import com.sap.cds.services.ServiceException;
 import com.sap.cds.services.runtime.CdsRuntime;
 import com.sap.cds.services.runtime.CdsRuntimeConfigurer;
 import com.sap.cds.services.utils.ErrorStatusException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
+import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class UtilsTest {
 
   private CdsRuntime cdsRuntime;
+  private HttpServletRequest httpServletRequest;
   private ClassicHttpResponse classicHttpResponse;
 
   @BeforeEach
   void setUp() {
     cdsRuntime = CdsRuntimeConfigurer.create().complete();
+    httpServletRequest = mock(HttpServletRequest.class);
     classicHttpResponse = mock(ClassicHttpResponse.class);
+  }
+
+  @SneakyThrows
+  @ParameterizedTest
+  @NullAndEmptySource
+  @ValueSource(strings = {"   ", "value"})
+  void whenHttpHeaderIsCalled_thenCorrectResultIsReturned(String input) {
+    doReturn(input).when(httpServletRequest).getHeader("header");
+
+    assertEquals(
+        (input == null || input.isBlank()) ? null : input, //
+        Utils.Http.header(httpServletRequest, "header"));
+
+    verify(httpServletRequest).getHeader("header");
+    verifyNoMoreInteractions(httpServletRequest);
   }
 
   @Test

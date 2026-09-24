@@ -16,6 +16,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Removed
 
+## [v6.0.2]
+
+### Fixed
+- Correctly handle empty 'Local-Tenant-Id' header values by @mlakov https://github.com/cap-java/cds-feature-ord/pull/39
+
+### Changed
+- Bump actions/setup-java in the minor-patch group by @dependabot https://github.com/cap-java/cds-feature-ord/pull/36
+- Bump the minor-patch group across 1 directory with 5 updates by @dependabot https://github.com/cap-java/cds-feature-ord/pull/35
+- Bump com.github.spotbugs:spotbugs-maven-plugin by @dependabot https://github.com/cap-java/cds-feature-ord/pull/37
+- Bump org.apache.maven.plugins:maven-deploy-plugin by @dependabot https://github.com/cap-java/cds-feature-ord/pull/38
+
 ## [v6.0.1]
 
 ### Added
@@ -23,7 +34,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Use EDMX providers for loading OData API definitions by @mlakov https://github.com/cap-java/cds-feature-ord/pull/32
-
 
 ### Changed
 - Bump the minor-patch group across 1 directory with 4 updates by @dependabot https://github.com/cap-java/cds-feature-ord/pull/23
