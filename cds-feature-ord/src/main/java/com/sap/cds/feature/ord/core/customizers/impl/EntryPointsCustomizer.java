@@ -1,24 +1,30 @@
 /*
  * © 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
-package com.sap.cds.feature.ord.processor.impl;
+package com.sap.cds.feature.ord.core.customizers.impl;
 
 import static com.sap.cds.feature.ord.common.Utils.CdsRuntimeProperties.getOdataV4Properties;
 import static com.sap.cds.feature.ord.common.Utils.Streams.asStream;
 
-import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.core.JsonStreamContext;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.sap.cds.feature.ord.processor.CdsOrdNodeProcessor;
+import com.sap.cds.feature.ord.core.customizers.CdsOrdNodeCustomizer;
 import com.sap.cds.services.runtime.CdsRuntime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
- * Processor for the entryPoints attribute in the CDS ORD service that adapts the entry points to
+ * Customizer for the entryPoints attribute in the CDS ORD service that adapts the entry points to
  * the configured OData V4 endpoint path.
  */
-public class EntryPointsProcessor implements CdsOrdNodeProcessor {
+@NoArgsConstructor
+@AllArgsConstructor
+public class EntryPointsCustomizer implements CdsOrdNodeCustomizer {
 
   private CdsRuntime cdsRuntime;
 
@@ -28,19 +34,19 @@ public class EntryPointsProcessor implements CdsOrdNodeProcessor {
   }
 
   @Override
-  public Predicate<String> predicate() {
-    return "entryPoints"::equals;
+  public Predicate<JsonStreamContext> predicate() {
+    return (context) -> Objects.equals("entryPoints", context.getCurrentName());
   }
 
   @Override
-  public <T extends TreeNode> Optional<T> process(String nodeName, T entryPoints) {
+  public JsonNode customize(String nodeName, JsonNode entryPoints) {
     return Optional.ofNullable(entryPoints) //
         .map(ArrayNode.class::cast) //
-        .map(this::process);
+        .map(this::process) //
+        .orElse(null);
   }
 
-  @SuppressWarnings("unchecked")
-  private <T extends TreeNode> T process(ArrayNode entryPoints) {
+  private ArrayNode process(ArrayNode entryPoints) {
     ArrayNode result = JsonNodeFactory.instance.arrayNode();
     String oDataPath = getOdataV4Properties(cdsRuntime).getEndpoint().getPath();
 
@@ -48,6 +54,6 @@ public class EntryPointsProcessor implements CdsOrdNodeProcessor {
         .map(node -> node.asText().replace("/odata/v4", oDataPath))
         .forEach(path -> result.add(JsonNodeFactory.instance.textNode(path)));
 
-    return (T) result;
+    return result;
   }
 }

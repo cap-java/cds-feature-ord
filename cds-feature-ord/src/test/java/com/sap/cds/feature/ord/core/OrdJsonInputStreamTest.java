@@ -1,13 +1,10 @@
 /*
  * © 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
-package com.sap.cds.feature.ord.common;
+package com.sap.cds.feature.ord.core;
 
-import static com.sap.cds.feature.ord.common.Constants.PERSPECTIVE_SYSTEM_VERSION;
 import static com.sap.cds.feature.ord.common.Utils.CdsRuntimeProperties.getOrdProperties;
 import static com.sap.cds.feature.ord.common.Utils.Resources.getResourceAsStream;
-import static com.sap.cds.feature.ord.common.Utils.Streams.asList;
-import static com.sap.cds.services.runtime.ExtendedServiceLoader.loadAll;
 import static com.sap.cds.services.utils.cert.UclAuthUtils.AccessStrategy.MTLS;
 import static org.apache.commons.io.FilenameUtils.concat;
 import static org.apache.commons.io.FilenameUtils.getBaseName;
@@ -15,9 +12,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.sap.cds.feature.ord.processor.CdsOrdNodeProcessor;
 import com.sap.cds.feature.ord.provider.AuthenticationManagerProvider;
-import com.sap.cds.feature.ord.provider.impl.StaticOrdResourcesProviderImpl;
+import com.sap.cds.feature.ord.resolver.impl.StaticOrdDocumentResolver;
 import com.sap.cds.impl.parser.JsonParser;
 import com.sap.cds.services.runtime.CdsRuntime;
 import com.sap.cds.services.runtime.CdsRuntimeConfigurer;
@@ -48,10 +44,9 @@ class OrdJsonInputStreamTest {
   void processingOrdDocumentIsSuccessful() throws IOException {
     String ordDocumentPath = getOrdProperties(cdsRuntime).getOrdDocumentPath();
     String document = concat("documents", getBaseName(ordDocumentPath));
-    StaticOrdResourcesProviderImpl provider =
-        new StaticOrdResourcesProviderImpl(cdsRuntime, asList(loadAll(CdsOrdNodeProcessor.class, cdsRuntime)));
+    StaticOrdDocumentResolver provider = new StaticOrdDocumentResolver(cdsRuntime);
 
-    try (InputStream is = provider.read(document, PERSPECTIVE_SYSTEM_VERSION)) {
+    try (InputStream is = provider.resolve(document)) {
       JsonNode actual = JsonParser.parseJson(new String(is.readAllBytes()));
       JsonNode expected = load("ord/ord-document-target.json");
 
