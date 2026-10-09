@@ -1,0 +1,4 @@
+com.sap.cds.feature.ord.resolver.impl.StaticOrdDocumentResolver
+com.sap.cds.feature.ord.resolver.impl.DynamicOrdDocumentResolver
+com.sap.cds.feature.ord.resolver.impl.StaticOrdResourceDefinitionResolver
+com.sap.cds.feature.ord.resolver.impl.DynamicOrdResourceDefinitionResolver
