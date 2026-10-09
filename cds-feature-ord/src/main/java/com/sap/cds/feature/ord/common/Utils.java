@@ -7,11 +7,15 @@ import static com.sap.cds.feature.ord.common.Utils.Exceptions.asHttpStatus;
 import static com.sap.cds.feature.ord.common.Utils.Exceptions.asLocalizedErrorMessage;
 import static com.sap.cds.services.utils.CdsErrorStatuses.ERROR_READING_ORD_DOCUMENT;
 import static java.lang.Thread.currentThread;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
+import static java.util.stream.StreamSupport.stream;
 
-import com.sap.cds.feature.ord.processor.CdsOrdNodeProcessor;
+import com.sap.cds.feature.ord.core.OrdJsonInputStream;
+import com.sap.cds.feature.ord.core.customizers.CdsOrdNodeCustomizer;
+import com.sap.cds.feature.ord.core.generators.CdsOrdNodeGenerator;
 import com.sap.cds.services.ServiceException;
 import com.sap.cds.services.environment.CdsProperties.Model.Provider;
 import com.sap.cds.services.environment.CdsProperties.ODataV4;
@@ -28,7 +32,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -82,12 +85,13 @@ public class Utils {
   public static class Streams {
 
     public static <T> Stream<T> asStream(Iterable<T> iterable) {
-      return StreamSupport.stream(iterable.spliterator(), false);
+      return stream(iterable.spliterator(), false);
     }
 
     public static <T> List<T> asList(Iterator<T> iterator) {
-      return StreamSupport.stream(spliteratorUnknownSize(iterator, ORDERED), false)
-          .toList();
+      return isNull(iterator)
+          ? List.of()
+          : stream(spliteratorUnknownSize(iterator, ORDERED), false).toList();
     }
   }
 
@@ -106,9 +110,9 @@ public class Utils {
     }
 
     public static InputStream asOrdJsonInputStream(
-        InputStream inputStream, List<CdsOrdNodeProcessor> cdsOrdNodeProcessors) {
+        InputStream inputStream, List<CdsOrdNodeGenerator> generators, List<CdsOrdNodeCustomizer> customizers) {
       try {
-        return new OrdJsonInputStream(inputStream, cdsOrdNodeProcessors);
+        return new OrdJsonInputStream(inputStream, generators, customizers);
       } catch (IOException exception) {
         throw new ErrorStatusException(ERROR_READING_ORD_DOCUMENT, "documents/ord-document", exception);
       }

@@ -1,24 +1,27 @@
 /*
  * © 2026 SAP SE or an SAP affiliate company. All rights reserved.
  */
-package com.sap.cds.feature.ord.common;
+package com.sap.cds.feature.ord.core;
 
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_SINGLE_QUOTES;
 import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES;
-import static com.fasterxml.jackson.core.JsonToken.END_ARRAY;
-import static com.fasterxml.jackson.core.JsonToken.END_OBJECT;
-import static com.fasterxml.jackson.core.JsonToken.START_ARRAY;
 import static com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS;
 import static com.google.common.primitives.Bytes.asList;
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.joining;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sap.cds.feature.ord.processor.CdsOrdNodeProcessor;
+import com.sap.cds.feature.ord.core.customizers.CdsOrdNodeCustomizer;
+import com.sap.cds.feature.ord.core.generators.CdsOrdNodeGenerator;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,15 +40,19 @@ public class OrdJsonInputStream extends InputStream {
 
   private final JsonParser parser;
   private final InputStream inputStream;
-  private final List<CdsOrdNodeProcessor> nodeProcessors;
+  private final List<CdsOrdNodeGenerator> generators;
+  private final List<CdsOrdNodeCustomizer> customizers;
 
   private JsonToken token;
   private JsonToken previous;
   private final Deque<Byte> buffer = new ArrayDeque<>();
 
-  public OrdJsonInputStream(InputStream inputStream, List<CdsOrdNodeProcessor> nodeProcessors) throws IOException {
+  public OrdJsonInputStream(
+      InputStream inputStream, List<CdsOrdNodeGenerator> generators, List<CdsOrdNodeCustomizer> customizers)
+      throws IOException {
     this.previous = null;
-    this.nodeProcessors = List.copyOf(nodeProcessors);
+    this.generators = List.copyOf(generators);
+    this.customizers = List.copyOf(customizers);
     this.inputStream = new BufferedInputStream(inputStream);
     this.parser = MAPPER.getFactory().createParser(this.inputStream);
     this.token = this.parser.nextToken();
@@ -68,58 +75,46 @@ public class OrdJsonInputStream extends InputStream {
       return -1;
     }
 
-    if (isFieldName(token)) {
-      return handleFieldName();
-    }
-
-    if (isStructEnd(token)) {
-      return handleStructEnd();
-    }
-
-    if (isStructStart(token)) {
-      return handleStructStart();
-    }
-
-    return handleFieldValue();
+    return switch (token) {
+      case FIELD_NAME -> handleFieldName();
+      case END_ARRAY, END_OBJECT -> handleStructEnd();
+      case START_ARRAY, START_OBJECT -> handleStructStart();
+      default -> handleFieldValue();
+    };
   }
 
   private void appendToBuffer(String... values) {
     Arrays.stream(values) //
-        .forEach(value -> buffer.addAll(asList(value.getBytes(UTF_8))));
+        .map(value -> value.getBytes(UTF_8)) //
+        .forEach(value -> buffer.addAll(asList(value)));
   }
 
   private int handleFieldName() throws IOException {
     String current = parser.currentName();
-    List<CdsOrdNodeProcessor> processors = lookupCdsOrdNodeProcessors(current);
-    JsonToken next = processors.isEmpty() ? null : parser.nextToken();
+    List<CdsOrdNodeCustomizer> customizers = lookupCustomizers(parser.getParsingContext());
 
-    appendToBuffer(
-        isStructStart(previous) ? "" : ",",
-        "\"",
-        current,
-        "\": ",
-        processors.isEmpty() ? "" : process(current, parser.readValueAsTree(), processors));
+    appendToBuffer(isStructStart(previous) ? "" : ",", format("\"%s\": ", current));
+    if (!customizers.isEmpty() && nonNull(parser.nextToken())) {
+      appendToBuffer(process(current, parser.readValueAsTree(), customizers));
+    }
 
-    previous = next == null ? token : (START_ARRAY == next ? END_ARRAY : END_OBJECT);
+    previous = firstNonNull(parser.currentToken(), parser.getLastClearedToken());
     token = parser.nextToken();
 
     return buffer.removeFirst() & 0xFF;
   }
 
   private int handleStructEnd() throws IOException {
-    JsonToken next = parser.nextToken();
+    JsonStreamContext context = parser.getParsingContext();
+    String generated = generators.stream()
+        .filter(generator -> generator.predicate().test(context))
+        .map(generator -> generator.generate(context))
+        .collect(joining(", "));
 
-    if (isNull(next)) { // We're at the end of the JSON file
-      nodeProcessors.stream().filter(CdsOrdNodeProcessor::canGenerate).forEach(processor -> processor
-          .<JsonNode>process(null, null)
-          .ifPresent(node ->
-              appendToBuffer(", \"" + processor.getGeneratedNodeName() + "\": ", node.toPrettyString())));
-    }
+    appendToBuffer((isStructStart(previous) || isEmpty(generated) ? "" : ","), generated, token.asString());
 
-    appendToBuffer(token.asString());
-
-    previous = token;
-    token = (next != null) ? next : parser.nextToken();
+    previous = firstNonNull(parser.currentToken(), parser.getLastClearedToken());
+    token = parser.nextToken();
 
     return buffer.removeFirst() & 0xFF;
   }
@@ -127,11 +122,9 @@ public class OrdJsonInputStream extends InputStream {
   private int handleFieldValue() throws IOException {
     appendToBuffer(
         isScalarValue(previous) ? "," : "",
-        isValueString(token) ? "\"" : "",
-        isValueString(token) ? parser.getValueAsString() : token.asString(),
-        isValueString(token) ? "\"" : "");
+        !isValueString(token) ? parser.getValueAsString() : format("\"%s\"", parser.getValueAsString()));
 
-    previous = token;
+    previous = firstNonNull(parser.currentToken(), parser.getLastClearedToken());
     token = parser.nextToken();
 
     return buffer.removeFirst() & 0xFF;
@@ -140,20 +133,16 @@ public class OrdJsonInputStream extends InputStream {
   private int handleStructStart() throws IOException {
     appendToBuffer(isStructEnd(previous) ? "," : "", token.asString());
 
-    previous = token;
+    previous = firstNonNull(parser.currentToken(), parser.getLastClearedToken());
     token = parser.nextToken();
 
     return buffer.removeFirst() & 0xFF;
   }
 
-  private List<CdsOrdNodeProcessor> lookupCdsOrdNodeProcessors(String node) {
-    return nodeProcessors.stream() //
-        .filter(processor -> processor.predicate().test(node)) //
+  private List<CdsOrdNodeCustomizer> lookupCustomizers(JsonStreamContext context) {
+    return customizers.stream() //
+        .filter(processor -> processor.predicate().test(context)) //
         .toList();
-  }
-
-  private static boolean isFieldName(JsonToken token) {
-    return nonNull(token) && JsonToken.FIELD_NAME == token;
   }
 
   private static boolean isStructEnd(JsonToken token) {
@@ -172,12 +161,9 @@ public class OrdJsonInputStream extends InputStream {
     return nonNull(token) && token.isStructStart();
   }
 
-  private static String process(String name, JsonNode node, List<CdsOrdNodeProcessor> processors) {
-    return processors.stream()
-        .reduce(
-            node,
-            (current, processor) -> processor.process(name, current).orElse(current),
-            (a, b) -> a)
+  private static String process(String name, JsonNode node, List<CdsOrdNodeCustomizer> customizers) {
+    return customizers.stream()
+        .reduce(node, (current, processor) -> processor.customize(name, current), (a, b) -> a)
         .toPrettyString();
   }
 }

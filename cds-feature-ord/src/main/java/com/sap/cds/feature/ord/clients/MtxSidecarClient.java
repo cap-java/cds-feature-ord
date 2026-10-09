@@ -5,7 +5,7 @@ package com.sap.cds.feature.ord.clients;
 
 public interface MtxSidecarClient {
 
-  String getOrdDocument();
+  byte[] getOrdDocument();
 
-  String getOrdResourceDefinition(String resource);
+  byte[] getOrdResourceDefinition(String resource);
 }

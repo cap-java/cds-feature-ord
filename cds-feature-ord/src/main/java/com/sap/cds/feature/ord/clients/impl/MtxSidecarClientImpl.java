@@ -8,9 +8,9 @@ import static com.sap.cds.feature.ord.common.Utils.Http.assertSuccessful;
 import static com.sap.cds.services.request.RequestContext.getCurrent;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.ApacheHttpClient5Accessor.getHttpClient;
 import static com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor.getDestination;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
 
 import com.sap.cds.CdsData;
@@ -22,7 +22,6 @@ import com.sap.cds.services.runtime.CdsRuntime;
 import java.io.IOException;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
@@ -38,24 +37,24 @@ public class MtxSidecarClientImpl implements MtxSidecarClient {
   private final CdsRuntime cdsRuntime;
 
   @Override
-  public String getOrdDocument() {
+  public byte[] getOrdDocument() {
     return doPost(API_PATH_GET_ORD_DOCUMENT, asGetOrdDocumentRequestEntity(getCurrent(cdsRuntime)));
   }
 
   @Override
-  public String getOrdResourceDefinition(String resource) {
+  public byte[] getOrdResourceDefinition(String resource) {
     return doPost(
         API_PATH_GET_ORD_RESOURCE_DEFINITION,
         asGetOrdResourceDefinitionRequestEntity(getCurrent(cdsRuntime), resource));
   }
 
-  private String doPost(String path, HttpEntity entity) {
+  private byte[] doPost(String path, HttpEntity entity) {
     try {
       return getHttpClient(getDestination(MTX_PROVISIONING_SERVICE_DESTINATION))
           .execute(
               ClassicRequestBuilder.post(path).setEntity(entity).build(),
-              response -> IOUtils.toString(
-                  assertSuccessful(response).getEntity().getContent(), UTF_8));
+              response -> toByteArray(
+                  assertSuccessful(response).getEntity().getContent()));
     } catch (IOException exception) {
       throw new ServiceException("Request to sidecar failed", exception);
     }

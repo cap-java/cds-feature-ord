@@ -1,0 +1,2 @@
+com.sap.cds.feature.ord.core.customizers.impl.EntryPointsCustomizer
+com.sap.cds.feature.ord.core.customizers.impl.ResourceDefinitionsCustomizer
