@@ -85,8 +85,10 @@ class StaticOrdResourcesProviderImplTest {
     String document =
         concat("documents", getBaseName(getOrdProperties(runtime).getOrdDocumentPath()));
 
-    assertThrows(IllegalArgumentException.class, () -> new StaticOrdResourcesProviderImpl(runtime, List.of())
-        .read(document, PERSPECTIVE_SYSTEM_INSTANCE));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> new StaticOrdResourcesProviderImpl(runtime, List.of())
+            .read(document, PERSPECTIVE_SYSTEM_INSTANCE));
   }
 
   @Test

@@ -48,7 +48,7 @@
         <jupiter.version>6.1.3</jupiter.version>
         <hamcrest.version>3.0</hamcrest.version>
         <jackson.version>2.22.3</jackson.version>
-        <mockito.version>5.23.0</mockito.version>
+        <mockito.version>5.24.0</mockito.version>
         <cloud.sdk.version>5.34.0</cloud.sdk.version>
         <cds.services.version>5.1.1</cds.services.version>
         <cds.url>https://cap.cloud.sap/docs/java</cds.url>
@@ -225,7 +225,7 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>3.10.2</version>
+                <version>3.10.3</version>
                 <executions>
                     <execution>
                         <goals>

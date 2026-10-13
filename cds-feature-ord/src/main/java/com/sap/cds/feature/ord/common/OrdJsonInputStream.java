@@ -110,10 +110,12 @@ public class OrdJsonInputStream extends InputStream {
     JsonToken next = parser.nextToken();
 
     if (isNull(next)) { // We're at the end of the JSON file
-      nodeProcessors.stream().filter(CdsOrdNodeProcessor::canGenerate).forEach(processor -> processor
-          .<JsonNode>process(null, null)
-          .ifPresent(node ->
-              appendToBuffer(", \"" + processor.getGeneratedNodeName() + "\": ", node.toPrettyString())));
+      nodeProcessors.stream()
+          .filter(CdsOrdNodeProcessor::canGenerate)
+          .forEach(processor -> processor
+              .<JsonNode>process(null, null)
+              .ifPresent(node -> appendToBuffer(
+                  ", \"" + processor.getGeneratedNodeName() + "\": ", node.toPrettyString())));
     }
 
     appendToBuffer(token.asString());
