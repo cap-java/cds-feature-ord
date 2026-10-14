@@ -49,7 +49,7 @@
         <hamcrest.version>3.0</hamcrest.version>
         <jackson.version>2.22.3</jackson.version>
         <mockito.version>5.24.0</mockito.version>
-        <cloud.sdk.version>5.34.0</cloud.sdk.version>
+        <cloud.sdk.version>5.35.0</cloud.sdk.version>
         <cds.services.version>5.1.1</cds.services.version>
         <cds.url>https://cap.cloud.sap/docs/java</cds.url>
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
