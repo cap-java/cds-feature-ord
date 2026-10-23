@@ -5,7 +5,6 @@ package com.sap.cds.feature.ord.provider.impl;
 
 import static com.sap.cds.feature.ord.common.Constants.PERSPECTIVE_SYSTEM_INSTANCE;
 import static com.sap.cds.feature.ord.common.Utils.Resources.asOrdJsonInputStream;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
@@ -57,10 +56,7 @@ public class DynamicOrdResourcesProviderImpl implements OrdResourcesProvider {
   private InputStream loadFromMTXSidecar(String resource) {
     return Objects.equals(ORD_DOCUMENT_PATH, resource)
         ? asOrdJsonInputStream(
-            new ByteArrayInputStream(
-                mtxSidecarClient.getOrdDocument().getBytes(UTF_8)),
-            cdsOrdNodeProcessors)
-        : new ByteArrayInputStream(
-            mtxSidecarClient.getOrdResourceDefinition(resource).getBytes(UTF_8));
+            new ByteArrayInputStream(mtxSidecarClient.getOrdDocument()), cdsOrdNodeProcessors)
+        : new ByteArrayInputStream(mtxSidecarClient.getOrdResourceDefinition(resource));
   }
 }

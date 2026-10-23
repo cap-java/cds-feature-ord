@@ -5,7 +5,7 @@ package com.sap.cds.feature.ord.client.impl;
 
 import static com.sap.cds.services.ErrorStatuses.SERVER_ERROR;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -105,8 +105,8 @@ class MtxSidecarClientImplTest {
         .thenAnswer(
             in -> in.getArgument(1, HttpClientResponseHandler.class).handleResponse(classicHttpResponse));
 
-    withMockedDestinationAccessor(
-        () -> withMockedApacheHttpClient5Accessor(() -> assertEquals("{}", classUnderTest.getOrdDocument())));
+    withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(
+        () -> assertArrayEquals("{}".getBytes(UTF_8), classUnderTest.getOrdDocument())));
 
     verifyNoOtherMockInteractions(() -> {
       verify(provider).isToggles();
@@ -196,8 +196,8 @@ class MtxSidecarClientImplTest {
         .thenAnswer(
             in -> in.getArgument(1, HttpClientResponseHandler.class).handleResponse(classicHttpResponse));
 
-    withMockedRequestContext(() -> withMockedDestinationAccessor(
-        () -> withMockedApacheHttpClient5Accessor(() -> assertEquals("{}", classUnderTest.getOrdDocument()))));
+    withMockedRequestContext(() -> withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(
+        () -> assertArrayEquals("{}".getBytes(UTF_8), classUnderTest.getOrdDocument()))));
 
     verifyNoOtherMockInteractions(() -> {
       verify(provider).isToggles();
@@ -233,8 +233,8 @@ class MtxSidecarClientImplTest {
         .thenAnswer(
             in -> in.getArgument(1, HttpClientResponseHandler.class).handleResponse(classicHttpResponse));
 
-    withMockedRequestContext(() -> withMockedDestinationAccessor(
-        () -> withMockedApacheHttpClient5Accessor(() -> assertEquals("{}", classUnderTest.getOrdDocument()))));
+    withMockedRequestContext(() -> withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(
+        () -> assertArrayEquals("{}".getBytes(UTF_8), classUnderTest.getOrdDocument()))));
 
     verifyNoOtherMockInteractions(() -> {
       verify(provider).isToggles();
@@ -270,8 +270,8 @@ class MtxSidecarClientImplTest {
         .thenAnswer(
             in -> in.getArgument(1, HttpClientResponseHandler.class).handleResponse(classicHttpResponse));
 
-    withMockedRequestContext(() -> withMockedDestinationAccessor(
-        () -> withMockedApacheHttpClient5Accessor(() -> assertEquals("{}", classUnderTest.getOrdDocument()))));
+    withMockedRequestContext(() -> withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(
+        () -> assertArrayEquals("{}".getBytes(UTF_8), classUnderTest.getOrdDocument()))));
 
     verifyNoOtherMockInteractions(() -> {
       verify(userInfo).getTenant();
@@ -308,8 +308,9 @@ class MtxSidecarClientImplTest {
         .thenAnswer(
             in -> in.getArgument(1, HttpClientResponseHandler.class).handleResponse(classicHttpResponse));
 
-    withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(() ->
-        assertEquals("{}", classUnderTest.getOrdResourceDefinition("dummy:ord:definition/Dummy.oas3.json"))));
+    withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(() -> assertArrayEquals(
+        "{}".getBytes(UTF_8),
+        classUnderTest.getOrdResourceDefinition("dummy:ord:definition/Dummy.oas3.json"))));
 
     verifyNoOtherMockInteractions(() -> {
       verify(provider).isToggles();
@@ -408,8 +409,10 @@ class MtxSidecarClientImplTest {
         .thenAnswer(
             in -> in.getArgument(1, HttpClientResponseHandler.class).handleResponse(classicHttpResponse));
 
-    withMockedRequestContext(() -> withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(() ->
-        assertEquals("{}", classUnderTest.getOrdResourceDefinition("dummy:ord:definition/Dummy.oas3.json")))));
+    withMockedRequestContext(() ->
+        withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(() -> assertArrayEquals(
+            "{}".getBytes(UTF_8),
+            classUnderTest.getOrdResourceDefinition("dummy:ord:definition/Dummy.oas3.json")))));
 
     verifyNoOtherMockInteractions(() -> {
       verify(provider).isToggles();
@@ -447,8 +450,10 @@ class MtxSidecarClientImplTest {
         .thenAnswer(
             in -> in.getArgument(1, HttpClientResponseHandler.class).handleResponse(classicHttpResponse));
 
-    withMockedRequestContext(() -> withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(() ->
-        assertEquals("{}", classUnderTest.getOrdResourceDefinition("dummy:ord:definition/Dummy.oas3.json")))));
+    withMockedRequestContext(() ->
+        withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(() -> assertArrayEquals(
+            "{}".getBytes(UTF_8),
+            classUnderTest.getOrdResourceDefinition("dummy:ord:definition/Dummy.oas3.json")))));
 
     verifyNoOtherMockInteractions(() -> {
       verify(provider).isToggles();
@@ -486,8 +491,10 @@ class MtxSidecarClientImplTest {
         .thenAnswer(
             in -> in.getArgument(1, HttpClientResponseHandler.class).handleResponse(classicHttpResponse));
 
-    withMockedRequestContext(() -> withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(() ->
-        assertEquals("{}", classUnderTest.getOrdResourceDefinition("dummy:ord:definition/Dummy.oas3.json")))));
+    withMockedRequestContext(() ->
+        withMockedDestinationAccessor(() -> withMockedApacheHttpClient5Accessor(() -> assertArrayEquals(
+            "{}".getBytes(UTF_8),
+            classUnderTest.getOrdResourceDefinition("dummy:ord:definition/Dummy.oas3.json")))));
 
     verifyNoOtherMockInteractions(() -> {
       verify(provider).isToggles();
