@@ -89,11 +89,13 @@ class UtilsTest {
 
   @Test
   void whenStreamsAsStreamIsCalled_thenCorrectResultIsReturned() {
+    assertEquals(List.of(), Utils.Streams.asStream(null).toList());
     assertEquals(List.of(1, 2, 3), Utils.Streams.asStream(List.of(1, 2, 3)).toList());
   }
 
   @Test
   void whenStreamsAsListIsCalled_thenCorrectResultIsReturned() {
+    assertEquals(List.of(), Utils.Streams.asList(null));
     assertEquals(List.of(1, 2, 3), Utils.Streams.asList(List.of(1, 2, 3).iterator()));
   }
 
