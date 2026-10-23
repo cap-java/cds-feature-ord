@@ -142,7 +142,7 @@ class DynamicOrdResourcesProviderImplTest {
       givenThatDynamicModelShouldBeUsed_and_perspectiveIsSystemInstance_and_ordDocumentIsRequested_whenReadIsCalled_thenCorrectResultIsReturned()
           throws IOException {
     doReturn(false).when(dynamicModelUtils).useStaticModel();
-    doReturn("{}").when(mtxSidecarClient).getOrdDocument();
+    doReturn("{}".getBytes(UTF_8)).when(mtxSidecarClient).getOrdDocument();
 
     assertEquals(
         "{}",
@@ -223,7 +223,9 @@ class DynamicOrdResourcesProviderImplTest {
           throws IOException {
     doReturn("ord/").when(openResourceDiscovery).getOrdResourcesRoot();
     doReturn(false).when(dynamicModelUtils).useStaticModel();
-    doReturn("{}").when(mtxSidecarClient).getOrdResourceDefinition("test:ord:service/test.oas3.json");
+    doReturn("{}".getBytes(UTF_8))
+        .when(mtxSidecarClient)
+        .getOrdResourceDefinition("test:ord:service/test.oas3.json");
 
     assertEquals(
         "{}",
