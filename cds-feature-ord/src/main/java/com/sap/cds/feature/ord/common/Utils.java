@@ -7,6 +7,7 @@ import static com.sap.cds.feature.ord.common.Utils.Exceptions.asHttpStatus;
 import static com.sap.cds.feature.ord.common.Utils.Exceptions.asLocalizedErrorMessage;
 import static com.sap.cds.services.utils.CdsErrorStatuses.ERROR_READING_ORD_DOCUMENT;
 import static java.lang.Thread.currentThread;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
@@ -82,12 +83,14 @@ public class Utils {
   public static class Streams {
 
     public static <T> Stream<T> asStream(Iterable<T> iterable) {
-      return StreamSupport.stream(iterable.spliterator(), false);
+      return isNull(iterable) ? Stream.empty() : StreamSupport.stream(iterable.spliterator(), false);
     }
 
     public static <T> List<T> asList(Iterator<T> iterator) {
-      return StreamSupport.stream(spliteratorUnknownSize(iterator, ORDERED), false)
-          .toList();
+      return isNull(iterator)
+          ? List.of()
+          : StreamSupport.stream(spliteratorUnknownSize(iterator, ORDERED), false)
+              .toList();
     }
   }
 
