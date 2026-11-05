@@ -16,6 +16,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Removed
 
+## [v6.1.0]
+
+### Changed
+- Bump the minor-patch group across 1 directory with 3 updates by @dependabot[bot] in #41
+- Bump the minor-patch group across 1 directory with 2 updates by @dependabot[bot] in #42
+- Bump com.sap.cloud.sdk:sdk-bom from 5.34.0 to 5.35.0 in the minor-patch group across 1 directory by @dependabot[bot] in #44
+- Bump the minor-patch group across 1 directory with 4 updates by @dependabot[bot] in #46
+- Bump actions/setup-java from 6.0.1 to 6.1.0 in the minor-patch group by @dependabot[bot] in #45
+- Improve Utils.Streams.asStream and Utils.Streams.asList by @mlakov in #48
+- Simplify MTX Sidecar Client by @mlakov in #47
+- Bump the minor-patch group across 1 directory with 3 updates by @dependabot[bot] in #49
+- Bump the minor-patch group across 1 directory with 3 updates by @dependabot[bot] in #50
+- Refactor ORD resolution by @mlakov in #43
+
 ## [v6.0.2]
 
 ### Fixed

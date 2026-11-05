@@ -39,7 +39,7 @@
     </distributionManagement>
 
     <properties>
-        <revision>6.0.2</revision>
+        <revision>6.1.0</revision>
         <jdk.version>17</jdk.version>
         <cds4j.version>5.2.0</cds4j.version>
         <slf4j.version>2.0.20</slf4j.version>
