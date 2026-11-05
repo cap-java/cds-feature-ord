@@ -4,17 +4,23 @@
 package com.sap.cds.feature.ord.servlet;
 
 import static com.sap.cds.feature.ord.common.Constants.HEADER_LOCAL_TENANT_ID;
+import static com.sap.cds.feature.ord.common.Constants.PERSPECTIVE_SYSTEM_VERSION;
 import static com.sap.cds.feature.ord.common.Utils.Http.handleException;
 import static com.sap.cds.feature.ord.common.Utils.Http.header;
-import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static com.sap.cds.feature.ord.common.Utils.Streams.asList;
+import static com.sap.cds.services.ErrorStatuses.NOT_FOUND;
+import static com.sap.cds.services.runtime.ExtendedServiceLoader.loadAll;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
+import static java.util.Comparator.comparingInt;
 import static org.apache.commons.io.FilenameUtils.getExtension;
+import static org.apache.commons.lang3.StringUtils.firstNonEmpty;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.apache.http.entity.ContentType.APPLICATION_XML;
 import static org.apache.http.entity.ContentType.TEXT_PLAIN;
 
 import com.sap.cds.feature.ord.provider.AuthenticationManagerProvider;
-import com.sap.cds.feature.ord.provider.OrdResourcesProvider;
+import com.sap.cds.feature.ord.resolver.OrdResolver;
+import com.sap.cds.services.ServiceException;
 import com.sap.cds.services.runtime.CdsRuntime;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,16 +66,14 @@ public class DocumentsServlet extends HttpServlet {
 
   private void processDocument(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String path = normalize(request.getPathInfo());
-    String perspective = request.getParameter("perspective");
     ContentType contentType = determineContentType(request.getPathInfo());
-    OrdResourcesProvider ordResourcesProvider = cdsRuntime.getProvider(OrdResourcesProvider.class);
+    String perspective = firstNonEmpty(request.getParameter("perspective"), PERSPECTIVE_SYSTEM_VERSION);
+    OrdResolver resolver = asList(loadAll(OrdResolver.class, cdsRuntime)).stream()
+        .filter(provider -> provider.isApplicable(path, perspective))
+        .min(comparingInt(OrdResolver::order))
+        .orElseThrow(() -> new ServiceException(NOT_FOUND, "Not Found"));
 
-    try (InputStream stream = ordResourcesProvider.read(path, perspective)) {
-      if (stream == null) {
-        response.setStatus(SC_NOT_FOUND);
-        return;
-      }
-
+    try (InputStream stream = resolver.resolve(path, perspective)) {
       response.setStatus(SC_OK);
       response.setContentType(contentType.getMimeType());
       response.setCharacterEncoding(contentType.getCharset().toString());
